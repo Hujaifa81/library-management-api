@@ -14,26 +14,42 @@ export const createBook = async (req: Request, res: Response): Promise<any> => {
             message: "Book created successfully",
             book
         });
-    } catch (error: any) {
-        if (error instanceof mongoose.Error.ValidationError) {
+    }
+    catch (error: any) {
+        if (error.code === 11000) {
+            const duplicatedField = Object.keys(error.keyValue || {})[0];
             return res.status(400).send({
-                message: "Validation failed",
                 success: false,
-                error: error
+                message: "Validation failed",
+                error: {
+                    path: duplicatedField,
+                    message: `${duplicatedField} must be unique. Value '${error.keyValue?.[duplicatedField]}' already exists.`
+                }
             });
         }
+
         if (error instanceof ZodError) {
             return res.status(400).json({
                 success: false,
                 message: "Validation failed",
-                error: error,
+                error: error.format(),
             });
         }
-        res.status(500).send({
-            message: "Validation failed",
+
+        if (error instanceof mongoose.Error.ValidationError) {
+            return res.status(400).send({
+                message: "Validation failed",
+                success: false,
+                error: error.errors
+            });
+        }
+
+        
+        return res.status(500).send({
+            message: "Something went wrong",
             success: false,
             error: error.message || error
-        })
+        });
     }
 
 };
@@ -52,7 +68,7 @@ export const getAllBooks = async (req: Request, res: Response): Promise<any> => 
             .sort([[sortBy as string, sort === 'desc' ? -1 : 1]])
             .limit(Number(limit));
 
-        if (books.length===0) {
+        if (books.length === 0) {
             return res.status(404).send({
                 success: true,
                 message: "Books not found",
@@ -79,12 +95,12 @@ export const getBookById = async (req: Request, res: Response): Promise<any> => 
         const book = await Book.findById(id)
         if (!book) {
             return res.status(404).send({
-                success: true,
+                success: false,
                 message: `Book not found by this ${id}`,
-                data: book
+                data: null
             })
         }
-        res.send({
+        res.status(200).send({
             success: true,
             message: "Book retrieved successfully",
             data: book
@@ -102,7 +118,7 @@ export const getBookById = async (req: Request, res: Response): Promise<any> => 
 export const updateBook = async (req: Request, res: Response): Promise<any> => {
     try {
         const id = req.params.bookId;
-        
+
         const body = await updateBookZodSchema.parseAsync(req.body);
         const book = await Book.findByIdAndUpdate(id, body, {
             new: true,
@@ -142,7 +158,7 @@ export const deleteBook = async (req: Request, res: Response) => {
         const id = req.params.bookId;
         const book = await Book.findByIdAndDelete(id);
         if (!book) {
-            res.status(404).send({
+            return res.status(404).send({
                 success: false,
                 message: 'Book not found',
                 data: null
