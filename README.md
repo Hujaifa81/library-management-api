@@ -205,7 +205,7 @@ Handles:
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Md Abu Hujaifa**  
 Full Stack Developer  
