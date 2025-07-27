@@ -6,15 +6,15 @@ A RESTful Library Management System built with **Express**, **TypeScript**, **Mo
 
 ## 🚀 Features
 
-- ✅ **Create, Read, Update, Delete (CRUD)** operations for Books
-- ✅ **Borrow books** with stock management logic
-- ✅ **Business rule**: Automatically toggle book availability based on stock
-- ✅ **Filtering**, **sorting**, and **limit**
-- ✅ **Zod-based validation** for request bodies
-- ✅ **Mongoose static methods** for logic encapsulation
-- ✅ **Mongoose middleware** (post hook) for auto-updating availability
-- ✅ **Aggregation pipeline** for borrowed books summary
-- ✅ Well-structured error responses
+-  **Create, Read, Update, Delete (CRUD)** operations for Books
+-  **Borrow books** with stock management logic
+-  **Business rule**: Automatically toggle book availability based on stock
+-  **Filtering**, **sorting**, and **limit**
+-  **Zod-based validation** for request bodies
+-  **Mongoose static methods** for logic encapsulation
+-  **Mongoose middleware** (post hook) for auto-updating availability
+-  **Aggregation pipeline** for borrowed books summary
+-  Well-structured error responses
 
 ---
 
